@@ -4,7 +4,7 @@ const { getSession, createSession } = require("../../cache/sessionCache");
 const { handleMessage: handleDriverReg }    = require("./driver");
 const { handleMessage: handlePassengerReg } = require("./passenger");
 
-const DRIVER_STEPS    = ["DRIVER_NAME",    "DRIVER_PHONE",    "DRIVER_PHOTO", "DRIVER_CAR_MODEL", "DRIVER_CAR_NUMBER"];
+const DRIVER_STEPS  = ["DRIVER_NAME",    "DRIVER_PHONE",    "DRIVER_PHOTO", "DRIVER_CAR_MODEL", "DRIVER_CAR_NUMBER"];
 const PASSENGER_STEPS = ["PASSENGER_NAME", "PASSENGER_PHONE"];
 
 function applyRegistration(bot) {
