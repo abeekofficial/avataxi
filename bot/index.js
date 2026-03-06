@@ -1,24 +1,24 @@
 // index.js — Bot kirish nuqtasi (Webhook + Polling auto-switch)
-const TelegramBot  = require("node-telegram-bot-api");
-const express      = require("express");
-const config       = require("./config");
-const connectDB    = require("./config/database");
-const logger       = require("./utils/logger");
+const TelegramBot = require("node-telegram-bot-api");
+const express = require("express");
+const config = require("./config");
+const connectDB = require("./config/database");
+const logger = require("./utils/logger");
 
 // ── Middlewares ───────────────────────────────────────────────────────────────
-const { applyGuard }        = require("./middlewares/botGuard");
+const { applyGuard } = require("./middlewares/botGuard");
 const { applyErrorHandler } = require("./middlewares/errorHandler");
 
 // ── Handlers ──────────────────────────────────────────────────────────────────
-const { applyStart }          = require("./handlers/start");
-const { applyRegistration }   = require("./handlers/registration");
-const { applyDriverMenu }     = require("./handlers/driver/menu");
-const { applyPassengerMenu }  = require("./handlers/passenger/menu");
+const { applyStart } = require("./handlers/start");
+const { applyRegistration } = require("./handlers/registration");
+const { applyDriverMenu } = require("./handlers/driver/menu");
+const { applyPassengerMenu } = require("./handlers/passenger/menu");
 const { applyCallbackRouter } = require("./handlers/callbackRouter");
-const { applyAdmin }          = require("./handlers/admin/index");
-const { applyHelp }           = require("./handlers/help");
-const { applyGroupJoin }      = require("./handlers/groupJoin");
-const { applyProfileEdit }    = require("./handlers/profile/edit");
+const { applyAdmin } = require("./handlers/admin/index");
+const { applyHelp } = require("./handlers/help");
+const { applyGroupJoin } = require("./handlers/groupJoin");
+const { applyProfileEdit } = require("./handlers/profile/edit");
 
 // ─── Handler'larni botga ulash ────────────────────────────────────────────────
 function applyHandlers(rawBot) {
@@ -40,11 +40,11 @@ function applyHandlers(rawBot) {
 
 // ─── WEBHOOK rejimi (Render.com production) ───────────────────────────────────
 async function startWebhook() {
-  const app        = express();
+  const app = express();
   const webhookUrl = config.webhook.url;
-  const port       = config.webhook.port;
-  const secret     = config.webhook.secret;
-  const hookPath   = "/webhook/" + secret;
+  const port = config.webhook.port;
+  const secret = config.webhook.secret;
+  const hookPath = "/webhook/" + secret;
 
   // Bot — webhook rejimida (polling o'chiq)
   const rawBot = new TelegramBot(config.bot.token, { polling: false });
@@ -52,7 +52,13 @@ async function startWebhook() {
   app.use(express.json());
 
   // Render.com health check — "spin down" ni oldini olish
-  app.get("/",       (req, res) => res.json({ status: "ok", mode: "webhook", uptime: Math.floor(process.uptime()) + "s" }));
+  app.get("/", (req, res) =>
+    res.json({
+      status: "ok",
+      mode: "webhook",
+      uptime: Math.floor(process.uptime()) + "s",
+    }),
+  );
   app.get("/health", (req, res) => res.json({ status: "ok" }));
 
   // Telegram update qabul qilish
@@ -70,7 +76,12 @@ async function startWebhook() {
     try {
       await rawBot.deleteWebHook();
       await rawBot.setWebHook(webhookUrl + hookPath, {
-        allowed_updates: ["message", "callback_query", "my_chat_member", "chat_member"],
+        allowed_updates: [
+          "message",
+          "callback_query",
+          "my_chat_member",
+          "chat_member",
+        ],
         drop_pending_updates: true,
       });
       const info = await rawBot.getWebHookInfo();
@@ -105,7 +116,12 @@ async function startPolling() {
       autoStart: true,
       params: {
         timeout: 10,
-        allowed_updates: ["message", "callback_query", "my_chat_member", "chat_member"],
+        allowed_updates: [
+          "message",
+          "callback_query",
+          "my_chat_member",
+          "chat_member",
+        ],
       },
     },
   });
@@ -113,15 +129,23 @@ async function startPolling() {
   applyHandlers(rawBot);
   logger.success("🔄 Polling rejimida ishlamoqda");
 
-  process.on("SIGTERM", () => { rawBot.stopPolling(); process.exit(0); });
-  process.on("SIGINT",  () => { rawBot.stopPolling(); process.exit(0); });
+  process.on("SIGTERM", () => {
+    rawBot.stopPolling();
+    process.exit(0);
+  });
+  process.on("SIGINT", () => {
+    rawBot.stopPolling();
+    process.exit(0);
+  });
 }
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 async function main() {
   try {
     await connectDB();
-    logger.success("🚀 Bot ishga tushdi [" + config.NODE_ENV.toUpperCase() + "]");
+    logger.success(
+      "🚀 Bot ishga tushdi [" + config.NODE_ENV.toUpperCase() + "]",
+    );
     logger.info("Admin IDs: " + config.bot.adminIds.join(", "));
 
     if (config.isProd && config.webhook.url) {

@@ -23,6 +23,15 @@ const REGISTRATION_STEPS = new Set([
   "CARGO_TO_REGION",
   "CARGO_DESCRIPTION",
   "CARGO_PHOTO",
+  // Profil tahrirlash steplari
+  "EDIT_NAME",
+  "EDIT_PHONE",
+  "EDIT_PHONE_WAIT",
+  "EDIT_CAR_MODEL",
+  "EDIT_CAR_NUMBER",
+  "EDIT_PHOTO",
+  "EDIT_FROM",
+  "EDIT_TO",
 ]);
 
 const PUBLIC_COMMANDS = new Set(["/start", "/help"]);

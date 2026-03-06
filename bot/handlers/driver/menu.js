@@ -14,6 +14,7 @@ const { createSession } = require("../../cache/sessionCache");
 function fmtDate(d) {
   if (!d) return "—";
   return new Date(d).toLocaleString("uz-UZ", {
+    timeZone: "Asia/Tashkent",
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -332,7 +333,19 @@ function applyDriverMenu(bot) {
           " ta\n" +
           "🔘 " +
           (user.isActive ? "Aktiv ✅" : "Nofaol ⏸"),
-        { parse_mode: "HTML" },
+        {
+          parse_mode: "HTML",
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "✏️ Profilni tahrirlash",
+                  callback_data: "open_profile_edit",
+                },
+              ],
+            ],
+          },
+        },
       );
     } catch (err) {
       logger.error("Profil error:", err);

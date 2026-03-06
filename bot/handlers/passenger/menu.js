@@ -14,6 +14,7 @@ const { getSession } = require("../../cache/sessionCache");
 function fmtDate(date) {
   if (!date) return "—";
   return new Date(date).toLocaleString("uz-UZ", {
+    timeZone: "Asia/Tashkent",
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -187,7 +188,14 @@ function applyPassengerMenu(bot) {
         "🔗 Referal havolangiz:\n" +
         referralLink;
 
-      bot.sendMessage(chatId, text, { parse_mode: "HTML" });
+      bot.sendMessage(chatId, text, {
+        parse_mode: "HTML",
+        reply_markup: {
+          inline_keyboard: [[
+            { text: "✏️ Profilni tahrirlash", callback_data: "open_profile_edit" },
+          ]],
+        },
+      });
     } catch (err) {
       logger.error("Passenger profil error:", err);
     }
