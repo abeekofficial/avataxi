@@ -1,5 +1,6 @@
 // handlers/start.js
-const User = require("../models/User.model");
+const User   = require("../models/User.model");
+const config = require("../config");
 const Order = require("../models/Order.model");
 const logger = require("../utils/logger");
 const { deleteSession } = require("../cache/sessionCache");
@@ -19,6 +20,22 @@ function applyStart(bot) {
 
     try {
       await deleteSession(chatId);
+
+      // ── ADMIN ─────────────────────────────────────────────────────────────
+      if (config.bot.adminIds.includes(chatId)) {
+        return bot.sendMessage(chatId, "👑 <b>ADMIN PANEL</b>\n\nXush kelibsiz!", {
+          parse_mode: "HTML",
+          reply_markup: {
+            keyboard: [
+              ["📊 Admin statistika",  "👥 Foydalanuvchilar"],
+              ["🚗 Haydovchilar",      "📦 Buyurtmalar"],
+              ["📢 Guruhlar",          "📣 Post yuborish"],
+              ["🔧 Tizim",             "🔍 Qidirish"],
+            ],
+            resize_keyboard: true,
+          },
+        });
+      }
 
       // ── GURUHDAN BUYURTMA QABUL QILISH: /start order_<orderId> ───────────
       if (param.startsWith("order_")) {

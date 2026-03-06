@@ -3,6 +3,8 @@ const User = require("../models/User.model");
 const logger = require("../utils/logger");
 const { getSession } = require("../cache/sessionCache");
 
+const config = require("../config");
+
 const REGISTRATION_STEPS = new Set([
   "PASSENGER_NAME",
   "PASSENGER_PHONE",
@@ -29,6 +31,9 @@ const ROLE_BUTTONS = new Set(["🚕 Haydovchi", "🧍 Yo'lovchi"]);
 async function ensureRegistered(msg) {
   const chatId = msg.chat.id;
   const text = msg.text || "";
+
+  // Admin hech qachon block bo'lmaydi
+  if (config.bot.adminIds.includes(Number(chatId))) return { ok: true };
 
   if (PUBLIC_COMMANDS.has(text.split(" ")[0])) return { ok: true };
   if (ROLE_BUTTONS.has(text)) return { ok: true };

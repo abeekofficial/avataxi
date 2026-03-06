@@ -43,7 +43,7 @@ function applyGroupJoin(bot) {
           inline_keyboard: [
             [
               {
-                text: "🚖 Botga kirish",
+                text: "🚖 Buyurtma berish",
                 url: "https://t.me/" + botInfo.username + "?start=group",
               },
             ],

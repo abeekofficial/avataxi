@@ -8,7 +8,9 @@ const botDir = __dirname.includes("config")
 
 // Avval .env, keyin .env.development — ikkalasini ham yuklash
 dotenv.config({ path: path.join(botDir, ".env") });
-dotenv.config({ path: path.join(botDir, `.env.${process.env.NODE_ENV || "development"}`) });
+dotenv.config({
+  path: path.join(botDir, `.env.${process.env.NODE_ENV || "development"}`),
+});
 
 const config = {
   NODE_ENV: process.env.NODE_ENV || "development",
@@ -55,10 +57,23 @@ const config = {
     offerTimeoutMs: 30_000,
     maxDriversPerOrder: 10,
   },
+
+  webhook: {
+    url: process.env.WEBHOOK_URL || "", // https://avataxi.onrender.com
+    port: Number(process.env.PORT) || 3000,
+    secret: process.env.WEBHOOK_SECRET || "regbot_secret_2024",
+  },
 };
 
 // Majburiy env tekshiruvi
 const required = ["BOT_TOKEN", "MONGO_URI"];
+// Production da WEBHOOK_URL ham kerak
+if (
+  (process.env.NODE_ENV || "development") === "production" &&
+  !process.env.WEBHOOK_URL
+) {
+  console.warn("⚠️  WEBHOOK_URL not set — webhook rejimi ishlamaydi");
+}
 for (const key of required) {
   if (!process.env[key]) {
     console.error("❌ Missing required env: " + key);
