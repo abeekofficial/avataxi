@@ -80,7 +80,6 @@ async function startWebhook() {
   app.listen(port, "0.0.0.0", async () => {
     logger.success("🌐 Express server: port " + port);
     try {
-      await rawBot.deleteWebHook();
       await rawBot.setWebHook(webhookUrl + hookPath, {
         allowed_updates: [
           "message",
@@ -110,11 +109,6 @@ async function startWebhook() {
 
 // ─── POLLING rejimi (local development) ──────────────────────────────────────
 async function startPolling() {
-  // Eski webhookni o'chirish
-  const tmp = new TelegramBot(config.bot.token, { polling: false });
-  await tmp.deleteWebHook({ drop_pending_updates: true }).catch(() => {});
-  logger.info("Eski webhook o'chirildi");
-
   const rawBot = new TelegramBot(config.bot.token, {
     polling: {
       interval: 300,
