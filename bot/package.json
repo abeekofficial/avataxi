@@ -1,6 +1,6 @@
 {
   "name": "avataxibot",
-  "version": "2.0.0",
+  "version": "2.1.1",
   "description": "Taxi & Cargo aggregator bot for 50k+ users",
   "main": "index.js",
   "scripts": {

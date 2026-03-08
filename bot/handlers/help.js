@@ -1,131 +1,127 @@
 // handlers/help.js
-// /botinfo va /help — barcha foydalanuvchilar uchun
+// /help va "📋 Bot haqida" — barcha foydalanuvchilar uchun
 
 const User = require("../models/User.model");
+const { version } = require("../package.json");
 
-const HELP_DRIVER = `
-<pre>🚖 HAYDOVCHI UCHUN QO'LLANMA</pre>
-
-<b>📋 RO'YXATDAN O'TISH</b>
-/start bosing → "🚕 Haydovchi" tanlang
-Ism, telefon, mashina ma'lumotlarini kiriting
-Yo'nalishni tanlang (qayerdan → qayerga)
-
-<b>🚗 MASHINA O'RINLARI TIZIMI</b>
-Mashinada maksimal <b>4 ta o'rin</b> bor
-Har bir qabul qilgan yo'lovchi buyurtmasida o'rinlar band bo'ladi
-Misol: 2 kishilik buyurtma qabul qilsangiz → 2 o'rin band
-Safar yakunlanganda yoki bekor qilinganda o'rinlar bo'shaydi
-Mashina to'lganda yangi buyurtma kelmaydi
-
-<b>📦 YUK/CARGO BUYURTMALAR</b>
-Yuk buyurtmalari o'rin tizimiga bog'liq emas
-Har doim alohida qabul qilinadi
-
-<b>🔄 BUYURTMA JARAYONI</b>
-1️⃣ Botga "🚖 Buyurtma qabul qilishni boshlash" bosing
-2️⃣ Yo'nalishni tanlang
-3️⃣ Yangi buyurtma kelganda bildirishnoma olasiz
-4️⃣ "✅ Qabul qilish" yoki "❌ Rad etish" bosing
-5️⃣ Qabul qilsangiz — yo'lovchi ma'lumotlari ko'rinadi
-6️⃣ Yo'lovchini olgach → "🚕 Safar boshlash"
-7️⃣ Manzilga yetgach → "✅ Safar yakunlandi"
-8️⃣ Yo'lovchi tasdiqlaydi → safar tugaydi
-
-<b>📋 MENING BUYURTMALARIM</b>
-Barcha holatdagi buyurtmalarni ko'rish:
-• ⚡ Aktiv (qabul qilingan, jarayonda)
-• 📋 Tarix (yakunlangan, bekor qilingan)
-Vaqt, davomiylik, kim bekor qilgani ko'rinadi
-
-<b>📊 STATISTIKA</b>
-Umumiy raqamlar: yakunlangan, bekor, reyting
-
-<b>⭐ REYTING TIZIMI</b>
-Har bir safardan keyin yo'lovchi baholaydi (1-5 yulduz)
-Reyting: A'lo (4.8+) | Yaxshi (4.5+) | O'rta (4.0+)
-
-<b>🌍 GURUHDAN BUYURTMA</b>
-Guruhda chiqgan buyurtmani ko'rsangiz
-"✅ Qabul qilaman" tugmasini bosing
-Bot sizga to'g'ridan-to'g'ri yozadi
-
-<b>👥 REFERAL TIZIMI</b>
-Referal havolangizni do'stlarga yuboring
-Har bir ro'yxatdan o'tgan kishi uchun ball
-
-<b>❓ KOMANDALAR</b>
-/start — bosh menyu
-/help — ushbu qo'llanma
-/myorders — mening buyurtmalarim
-`.trim();
-
-const HELP_PASSENGER = `
-<pre>🧍 YO'LOVCHI UCHUN QO'LLANMA</pre>
-
-<b>📋 RO'YXATDAN O'TISH</b>
-/start bosing → "🧍 Yo'lovchi" tanlang
-Ism va telefon raqamingizni kiriting
-
-<b>🚖 BUYURTMA BERISH</b>
-"🚖 Buyurtma berish" — yo'lovchi sifatida
-"📦 Yuk/Pochta" — yuk jo'natish uchun
-
-<b>🔄 BUYURTMA JARAYONI</b>
-1️⃣ "🚖 Buyurtma berish" bosing
-2️⃣ Qayerdan va qayerga ketishni tanlang
-3️⃣ Nechta kishi ekanini kiriting (1-4)
-4️⃣ Sistema haydovchi qidiradi
-5️⃣ Haydovchi topilganda — ma'lumotlari keladi
-6️⃣ Safar boshlanishi haqida xabar olasiz
-7️⃣ Manzilga yetgach haydovchi yakunlashni so'raydi
-8️⃣ "✅ Ha, yakunlandi" bosing → reyting bering
-
-<b>📦 YUK/POCHTA JO'NATISH</b>
-Yukni tavsiflab yozing
-Rasm yuklash ixtiyoriy
-Haydovchi topilganda xabar keladi
-
-<b>📋 TARIXIM</b>
-Barcha buyurtmalar tarixi:
-• ⚡ Aktiv buyurtmalar (bekor qilish tugmasi)
-• 📋 O'tgan buyurtmalar (vaqt, holat)
-
-<b>⭐ BAHOLASH</b>
-Safar tugagach haydovchini baholang (1-5 yulduz)
-Yaxshi reyting — yaxshi haydovchilar!
-
-<b>❌ BEKOR QILISH</b>
-Safar boshlanmagan bo'lsa bekor qilish mumkin
-Safar boshlangandan keyin bekor bo'lmaydi
-
-<b>👥 REFERAL TIZIMI</b>
-Referal havolangiz "👤 Profilim" da
-Do'stlarni taklif qiling
-
-<b>❓ KOMANDALAR</b>
-/start — bosh menyu
-/help — ushbu qo'llanma
-`.trim();
-
+// ─── YANGI FOYDALANUVCHI ──────────────────────────────────────────────────────
 const HELP_NEW = `
-<pre>👋 BOT HAQIDA</pre>
+🚖 <b>AVATAXI</b> | <a>${version}</a>
+⚡ Telegram orqali ishlaydigan aqlli taksi tizimi!
 
-<b>🚖 Taxi & Yuk Tashish Boti</b>
+🚀 <b>Boshlash uchun:</b>
+<blockquote>/start → Ro'yxatdan o'ting</blockquote>
 
-Ushbu bot orqali:
-• 🚕 Taksi buyurtma bering
-• 📦 Yuk/pochta jo'nating
-• 🚗 Haydovchi sifatida daromad toping
+👤 <b>Rolni tanlang:</b>
+<blockquote>🚕 Haydovchi — buyurtma qabul qiling, daromad toping
+🧍 Yo'lovchi — tez va qulay taksi buyurtma bering</blockquote>
 
-<b>BOSHLASH UCHUN:</b>
-/start — ro'yxatdan o'ting
+✨ <b>Imkoniyatlar:</b>
+<blockquote>🌍 Viloyatlararo safar va yuk tashish
+⚡ Tezkor haydovchi topish tizimi
+🔄 Real vaqtda buyurtma kuzatuvi
+⭐ Ikki tomonlama baholash tizimi
+👥 Do'stlarni taklif qilish (referal)</blockquote>`.trim();
 
-<b>ROLLAR:</b>
-🚕 <b>Haydovchi</b> — buyurtma qabul qiling
-🧍 <b>Yo'lovchi</b> — buyurtma bering
-`.trim();
+// ─── HAYDOVCHI ────────────────────────────────────────────────────────────────
+const HELP_DRIVER = `
+🚗 <b>HAYDOVCHI UCHUN QO'LLANMA</b> | <code>${version}</code>
 
+📋 <b>Ro'yxatdan o'tish:</b>
+<blockquote>/start → "🚕 Haydovchi" tugmasini bosing
+👤 To'liq ism, 📱 telefon, 🤳 profil rasm
+🚙 Mashina modeli va 🔢 davlat raqami
+🗺 Yo'nalish: qayerdan → qayerga</blockquote>
+
+🎯 <b>Buyurtma qabul qilish jarayoni:</b>
+<blockquote>1️⃣ Bildirishnoma keladi — yo'nalish, necha kishi
+2️⃣ 30 soniya ichida qaror qiling
+3️⃣ ✅ Qabul → yo'lovchi ma'lumotlari ochiladi
+4️⃣ Yo'lovchini olgach → "🚕 Safar boshlash"
+5️⃣ Manzilga yetgach → "✅ Safar yakunlandi"
+6️⃣ Yo'lovchi tasdiqlaydi → ⭐ baholash</blockquote>
+
+🔄 <b>Buyurtma qanday keladi:</b>
+<blockquote>🤖 Avtomatik — bot sizga to'g'ridan-to'g'ri yuboradi
+⏱ 30 soniyada javob bermasangiz — keyingisiga o'tiladi
+📢 Guruh orqali — hech kim olmasa guruhga chiqariladi</blockquote>
+
+🚗 <b>Mashina o'rinlari tizimi:</b>
+<blockquote>Mashinada maksimal 4 ta o'rin bor
+2 kishilik buyurtma → 2 o'rin band bo'ladi
+Safar yakunlansa → o'rinlar avtomatik bo'shaydi
+Mashina to'lganda → yangi buyurtma kelmaydi
+💡 Bir vaqtda bir nechta yo'lovchi olish mumkin!</blockquote>
+
+📦 <b>Yuk/Cargo buyurtmalar:</b>
+<blockquote>O'rin tizimiga bog'liq emas — alohida qabul qilinadi
+Aktiv buyurtma bo'lsa yuk qabul qilib bo'lmaydi</blockquote>
+
+⭐ <b>Reyting tizimi:</b>
+<blockquote>🏆 4.8 – 5.0 → A'lo haydovchi
+✅ 4.5 – 4.7 → Yaxshi haydovchi
+📊 4.0 – 4.4 → O'rtacha
+⚠️ 4.0 dan past → Reyting oshiring</blockquote>
+
+👥 <b>Referal tizimi:</b>
+<blockquote>🔗 Havolangizni do'stlarga yuboring
+Har bir ro'yxatdan o'tgan do'st uchun ball
+Havola: "👤 Profilim" bo'limida</blockquote>
+
+❓ <b>Komandalar:</b>
+<blockquote>/start — bosh menyu
+/help — ushbu qo'llanma
+/myorders — mening buyurtmalarim</blockquote>`.trim();
+
+// ─── YO'LOVCHI ────────────────────────────────────────────────────────────────
+const HELP_PASSENGER = `
+🧍 <b>YO'LOVCHI UCHUN QO'LLANMA</b> | <a>${version}</a>
+
+📋 <b>Ro'yxatdan o'tish:</b>
+<blockquote>/start → "🧍 Yo'lovchi" tugmasini bosing
+👤 To'liq ism va 📱 telefon raqamingizni kiriting</blockquote>
+
+🚖 <b>Taksi buyurtma berish:</b>
+<blockquote>1️⃣ "🚖 Buyurtma berish" tugmasini bosing
+2️⃣ Qayerdan va qayerga ketishni tanlang
+3️⃣ Necha kishi ekanini tanlang (1-4)
+4️⃣ Tizim avtomatik haydovchi qidiradi
+5️⃣ Haydovchi topilganda uning ma'lumotlari keladi
+6️⃣ Safar yakunlangach → "✅ Ha, yakunlandi"
+7️⃣ Haydovchini ⭐ baholang</blockquote>
+
+🔄 <b>Haydovchi qanday topiladi:</b>
+<blockquote>⚡ Birinchi navbatda reytingi yuqori haydovchilar
+⏱ Haydovchi 30 soniya ichida qaror qiladi
+🔁 Rad etsa — keyingi haydovchiga o'tiladi
+📢 Hech kim bo'lmasa — umumiy guruhga chiqariladi</blockquote>
+
+📦 <b>Yuk/Pochta jo'natish:</b>
+<blockquote>1️⃣ "📦 Yuk/Pochta" tugmasini bosing
+2️⃣ Yo'nalishni tanlang
+3️⃣ Yuk tavsifini yozing
+4️⃣ Rasm yuboring (ixtiyoriy)
+5️⃣ Haydovchi topilganda xabar keladi</blockquote>
+
+❌ <b>Bekor qilish:</b>
+<blockquote>Safar boshlanmagan bo'lsa — bekor qilish mumkin
+Safar boshlangandan keyin bekor bo'lmaydi
+Haydovchi bekor qilsa — darhol xabardor bo'lasiz</blockquote>
+
+⭐ <b>Baholash tizimi:</b>
+<blockquote>Safar yakunlangach haydovchini 1-5 yulduz bering
+Siz ham haydovchi tomonidan baholanasiz!
+Yaxshi yo'lovchi — tezroq xizmat oladi 😊</blockquote>
+
+👥 <b>Referal tizimi:</b>
+<blockquote>🔗 "👤 Profilim" da referal havolangiz bor
+Do'stlarni taklif qiling → ball to'plang</blockquote>
+
+❓ <b>Komandalar:</b>
+<blockquote>/start — bosh menyu
+/help — ushbu qo'llanma</blockquote>`.trim();
+
+// ─── FUNKSIYALAR ──────────────────────────────────────────────────────────────
 function applyHelp(bot) {
   bot.onText(/\/help|📋 Bot haqida/, async (msg) => {
     const chatId = msg.chat.id;
@@ -152,8 +148,7 @@ function applyHelp(bot) {
   bot.onText(/\/myorders/, async (msg) => {
     const chatId = msg.chat.id;
     if (msg.chat.type !== "private") return;
-    // driver/menu.js yoki passenger/menu.js trigger qiladi
-    // Bu yerda faqat redirect
+
     bot.sendMessage(
       chatId,
       "📋 Buyurtmalaringizni ko'rish uchun menyudagi tugmani bosing:",
