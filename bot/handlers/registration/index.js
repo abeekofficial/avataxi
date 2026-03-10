@@ -15,7 +15,7 @@ function applyRegistration(bot) {
       await createSession(chatId, "DRIVER_NAME", { role: "driver" });
       return bot.sendMessage(
         chatId,
-        "👤 Ismingizni kiriting:\n(Masalan: Abror Toshmatov)",
+        "👤 Ismingizni kiriting",
         { reply_markup: { remove_keyboard: true } },
       );
     } catch (err) {
@@ -30,7 +30,7 @@ function applyRegistration(bot) {
       await createSession(chatId, "PASSENGER_NAME", { role: "passenger" });
       return bot.sendMessage(
         chatId,
-        "👤 Ismingizni kiriting:\n(Masalan: Kamola Yusupova)",
+        "👤 Ismingizni kiriting",
         { reply_markup: { remove_keyboard: true } },
       );
     } catch (err) {
